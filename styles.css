@@ -1,3 +1,16 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0px;
+}
+
+header {
+    padding: 1em;
+    height: 15vh;
+    background: rgb(235, 235, 235);
+}
 #mapid {
-    min-height: 100vh;
+    height: 85vh;
 }
