@@ -1,110 +1,166 @@
-$(document).ready(function() {
 
-    let appState = {
-        theme: "light",
-        current: {
-            location: null,
-            marker: null,
-        },
-        search: {
-            location: null,
-            marker: null
-        },
-        map: null,
+let appState = {
+    theme: "light",
+    location: {
+        name: null,
+        marker: null,
+        userCount: 0,
+    },
+    users: [],
+    page: 0,
+    map: null,
+}
+
+async function myFetch(url) {
+    const response = await fetch(url);
+    const data = await response.json();
+    return data;
+}
+
+async function handleAsideScroll(e) {
+    const {clientHeight, scrollTop, scrollHeight} = e.target;
+    if (clientHeight + scrollTop >= scrollHeight) {
+        const userData = await getUsersByLocation(appState.location.name);
+        appState.users.push(userData.items);
+        renderUsers();
     }
+}
 
-    async function myFetch(url) {
-        const response = await fetch(url);
-        const data = await response.json();
-        return data;
-    }
+function buildUserCard(user) {
+    return `
+        <div class="user-card">
+            <img class="user-img" src="${user.avatar_url}"/>
+            ${user.login}
+        </div>
+    `;
 
-    function buildMap(lat, lon) {
-        appState.map = L.map('mapid');
+}
 
-        var styles = ["mapbox.light", "mapbox.dark"]
+function renderUsers() {
+    let aside = document.getElementById("aside-users");
+    let usersPage = appState.users[appState.page-1];
+    let arrUsers = usersPage.map(buildUserCard);
 
-        setMapView(lat, lon, 5);
+    var div = document.createElement("div");
+    div.innerHTML = arrUsers.join("");
 
-        L.tileLayer(`https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=${MapBoxAccessToken}`, {
-            attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-            maxZoom: 18,
-            id: styles[1],
-            accessToken: MapBoxAccessToken
-        }).addTo(appState.map);
-    }
+    aside.appendChild(div); 
+}
 
-    function addMarker(cityName, lat, lon, usersCount) {
-        var marker = L.marker([lat, lon]).addTo(appState.map);
-        marker.bindPopup(`<b>${cityName}</b><br>Has ${usersCount} hackers`).openPopup();
-        return marker;
-    }
+function buildMap(lat, lon) {
+    appState.map = L.map('mapid');
 
-    async function getLocation() {
-        const url = 'http://ip-api.com/json';
-        const location = await myFetch(url);
-        return location;
-    }
+    var styles = ["mapbox.light", "mapbox.dark"]
 
-    async function getCoordinates(place) {
-        let url = `https://api.opencagedata.com/geocode/v1/json?q=${place}&key=${geoLocationKey}`;
-        const data = await myFetch(url);
-        return data.results[0];
-    }
+    setMapView(lat, lon, 5);
 
-    async function getUsersByLocation(city) {
-        const url = `https://api.github.com/search/users?q=location:${city}`
-        const users = await myFetch(url);
-        return users;
+    L.tileLayer(`https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=${MapBoxAccessToken}`, {
+        attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+        maxZoom: 18,
+        id: styles[0],
+        accessToken: MapBoxAccessToken
+    }).addTo(appState.map);
 
-    }
+    appState.map.zoomControl.setPosition('bottomright');
 
-    function setMapView(lat, lon, zoom = 0) {
-        appState.map.setView([lat, lon], zoom);
-    }
+}
 
-    async function handleLocationForm(e) {
-        e.preventDefault();
-        if (appState.search.marker) {
-            appState.search.marker.remove();
-        }
+function addMarker(cityName, lat, lon, usersCount) {
+    var marker = L.marker([lat, lon]).addTo(appState.map);
+    marker.bindPopup(`
+        <strong>${cityName}</strong>
+        <br>
+        <p>Has ${usersCount} hackers</p>`
+    ).openPopup();
+    return marker;
+}
 
-        const target = e.target;
-        const searchString = encodeURI(target[0].value);
-        let city = null;
-        
-        const users = await getUsersByLocation(searchString);
-        const usersCount = users.total_count;
+async function getLocation() {
+    const url = 'http://ip-api.com/json';
+    const location = await myFetch(url);
+    return location;
+}
 
-        const locationData = await getCoordinates(searchString);
+async function getCoordinates(place) {
+    let url = `https://api.opencagedata.com/geocode/v1/json?q=${place}&key=${geoLocationKey}`;
+    const data = await myFetch(url);
+    return data.results[0];
+}
 
-        if (locationData.components._type === "country") {
-            city = locationData.components.country;
-        } else if (locationData.components._type === "city") {
-            city = locationData.components.city;
-        }
+async function getUsersByLocation(city) {
+    appState.page++;
+    const url = `https://api.github.com/search/users?q=location:${city}&page=${appState.page}`
+    const users = await myFetch(url);
+    return users;
+}
 
-        const {lat, lng} = locationData.geometry;
+function setMapView(lat, lon, zoom = 0) {
+    appState.map.setView([lat, lon], zoom);
+}
 
-        setMapView(lat, lng, 6)
-        appState.search.marker = addMarker(city, lat, lng, usersCount);;
-    }
+function cleanupUsers() {
+    appState.users = [];
+    const aside = document.getElementById("aside-users");
+    aside.innerHTML = "";
+}
 
-    function addEvents() {
-        let form = document.getElementById("location-form");
-        form.addEventListener("submit", handleLocationForm);
-    }
+async function handleLocationForm(e) {
+    e.preventDefault();
+    //TODO: resetState
+    cleanupUsers();
+    appState.page = 0;
     
-    async function init () {
-        addEvents();
-
-        const location = await getLocation();
-        appState.current.location = location;
-        const {city, lat, lon} = location;
-        buildMap(lat, lon);
-        const users = await getUsersByLocation(city);
-        appState.current.marker = addMarker(city, lat, lon, users.total_count);;
+    //TODO: resetState
+    if (appState.location.marker) {
+        appState.location.marker.remove();
     }
 
-    init();
-});
+    const target = e.target;
+    const searchString = encodeURI(target[0].value);
+    let city = null;
+    
+    const usersData = await getUsersByLocation(searchString);
+    const usersCount = usersData.total_count;
+
+    const locationData = await getCoordinates(searchString);
+
+    if (locationData.components._type === "country") {
+        city = locationData.components.country;
+    } else if (locationData.components._type === "city") {
+        city = locationData.components.city;
+    }
+
+    const {lat, lng} = locationData.geometry;
+
+    setMapView(lat, lng, 6)
+    appState.location.name = city;
+    appState.location.marker = addMarker(city, lat, lng, usersCount);
+    appState.users.push(usersData.items);
+    renderUsers();
+}
+
+function addEvents() {
+    const form = document.getElementById("location-form");
+    const aside = document.getElementById("aside-users");
+
+    form.addEventListener("submit", handleLocationForm);
+    aside.addEventListener("scroll", handleAsideScroll);
+}
+
+// function updateUsers
+
+async function init () {
+    addEvents();
+
+    const location = await getLocation();
+    const {city, lat, lon} = location;
+    appState.location.name = city;
+    buildMap(lat, lon);
+    const userData = await getUsersByLocation(city);
+    appState.users.push(userData.items);
+    appState.location.userCount = userData.total_count;
+    appState.location.marker = addMarker(city, lat, lon, appState.location.userCount);
+    renderUsers();
+}
+
+init();

@@ -6,6 +6,11 @@ body {
     margin: 0px;
 }
 
+#app {
+    position: relative;
+    height: 100vh;
+}
+
 header {
     padding: 1em;
     height: 15vh;
@@ -13,4 +18,26 @@ header {
 }
 #mapid {
     height: 85vh;
+}
+
+#aside-users {
+    height: 100%;
+    width: 200px;
+    height: 85vh;
+    position: absolute;
+    z-index: 1000;
+    background: rgb(235, 235, 235);
+    overflow-y: auto;
+}
+
+.user-card {
+    border: solid 1px grey;
+    margin:  5px;
+    padding: 5px;
+}
+
+.user-img {
+    height: 50px;
+    width: 50px;
+    border-radius: 50%;
 }
