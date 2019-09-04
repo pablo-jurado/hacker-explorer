@@ -6,15 +6,14 @@ body {
     margin: 0px;
 }
 
-#app {
-    position: relative;
-    height: 100vh;
-    background-color: #fff;
-}
-
 header {
     padding: 1em;
     height: 20vh;
+}
+
+#app {
+    position: relative;
+    height: 100vh;
 }
 
 .input-txt {
@@ -31,7 +30,6 @@ header {
     height: 80vh;
     position: absolute;
     z-index: 1000;
-    background: #fff;
     overflow-y: auto;
     padding: 5px 10px;
 }
@@ -47,7 +45,6 @@ header {
 }
 
 .box:hover {
-    background-color: #EDF2F7;
     transition: all 0.2s ease-in-out;
 }
 
@@ -56,5 +53,82 @@ header {
     width: 50px;
     margin-right: 10px;
     border-radius: 50%;
-    box-shadow: 0 0 5px #CBD5E0;
+}
+
+#app.light {
+    background-color: #fff;
+}
+
+#app.dark {
+    background-color: #2D3748;
+    color: #fff;
+}
+
+.light #aside-users {
+    background: #fff;
+}
+
+.dark #aside-users {
+    background: #2D3748;
+}
+
+.light .box {
+    background: #fff;
+    color: #4a4a4a;
+    box-shadow: 0 2px 3px rgba(10,10,10,.1), 0 0 0 1px rgba(10,10,10,.1);
+}
+
+.dark .box {
+    background-color: #1A202C;
+    color: #EDF2F7;
+    border-color: #718096;
+}
+
+
+.light .box:hover {
+    background-color: #F7FAFC;
+}
+
+.dark .box:hover {
+    background-color: #4A5568;
+}
+
+.dark .input-txt, .dark .button {
+    background-color: #1A202C;
+    color: #EDF2F7;
+    border-color: #718096;
+}
+
+.button {
+    transition: all 0.2s ease-in-out;
+}
+
+.light .button:hover {
+    background-color: #F7FAFC;
+    transition: all 0.2s ease-in-out;
+}
+
+.dark .button:hover {
+    background-color: #4A5568;
+    transition: all 0.2s ease-in-out;
+}
+
+.dark .subtitle {
+    color: #EDF2F7; 
+}
+
+.dark ::placeholder {
+    color: #718096;
+}
+
+#light-btn {
+    background-color: #fff;
+    border-color: #dbdbdb;
+    color: #363636;
+}
+
+#dark-btn {
+    background-color: #1A202C;
+    color: #EDF2F7;
+    border-color: #718096;
 }

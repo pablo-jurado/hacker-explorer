@@ -3,6 +3,8 @@ let appState = {
     theme: "light",
     location: {
         name: null,
+        lat: null,
+        lon: null,
         marker: null,
         userCount: 0,
     },
@@ -57,7 +59,7 @@ function buildMap(lat, lon) {
     L.tileLayer(`https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=${MapBoxAccessToken}`, {
         attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
         maxZoom: 18,
-        id: styles[0],
+        id: `mapbox.${appState.theme}`,
         accessToken: MapBoxAccessToken
     }).addTo(appState.map);
 
@@ -128,7 +130,6 @@ function getLocationName(location) {
     } else {
         locationName = "Unknown";
     }
-
     return locationName;
 }
 
@@ -147,21 +148,61 @@ async function handleLocationForm(e) {
 
     const locationData = await getCoordinates(searchString);
     const locationName = getLocationName(locationData);
-    appState.location.name = locationName;
-
     const {lat, lng} = locationData.geometry;
+
+    appState.location.name = locationName;
+    appState.location.lat = lat;
+    appState.location.lon = lng;
+
     setMapView(lat, lng, 6);
 
     appState.location.marker = addMarker(locationName, lat, lng, appState.location.userCount);
     renderUsers();
 }
 
-function addEvents() {
-    const form = document.getElementById("location-form");
-    const aside = document.getElementById("aside-users");
+// function disableBtn(btn) {
+//     btn.style.opacity = "0.2";
+//     btn.disabled = true;
+// }
 
-    form.addEventListener("submit", handleLocationForm);
-    aside.addEventListener("scroll", handleAsideScroll);
+// function enableBtn(btn) {
+//     btn.style.opacity = "1";
+//     btn.disabled = false;
+// }
+
+function toggleUITheme() {
+    const darkBtn = document.getElementById("dark-btn");
+    const lightBtn = document.getElementById("light-btn");
+    const app =  document.getElementById("app");
+    
+    if (appState.theme === "light") {
+        appState.theme = "dark";
+        
+        app.classList.remove("light");
+        app.classList.add("dark");
+
+        darkBtn.style.display = "none";
+        lightBtn.style.display = "inline-flex";
+    } else {
+        appState.theme = "light";
+        
+        app.classList.remove("dark");
+        app.classList.add("light");     
+        
+        lightBtn.style.display = "none";
+        darkBtn.style.display = "inline-flex";
+    }
+
+    appState.map.remove();    
+    buildMap(appState.location.lat, appState.location.lon);
+
+    appState.location.marker = addMarker(
+        appState.location.name, 
+        appState.location.lat,
+        appState.location.lon,
+        appState.location.userCount
+    );
+
 }
 
 function saveUsersData(usersData) {
@@ -172,13 +213,31 @@ function saveUsersData(usersData) {
     appState.location.userCount = userCount;
 }
 
+function addEvents() {
+    const form = document.getElementById("location-form");
+    const aside = document.getElementById("aside-users");
+    const darkBtn = document.getElementById("dark-btn");
+    const lightBtn = document.getElementById("light-btn");
+
+    form.addEventListener("submit", handleLocationForm);
+    aside.addEventListener("scroll", handleAsideScroll);
+    darkBtn.addEventListener("click", toggleUITheme);
+    lightBtn.addEventListener("click", toggleUITheme);
+}
+
 async function init () {
+    const lightBtn = document.getElementById("light-btn");
+    lightBtn.style.display = "none";
+
     addEvents();
 
     const location = await getLocation();
     const {city, lat, lon} = location;
 
     appState.location.name = city;
+    appState.location.lat = lat;
+    appState.location.lon = lon;
+
     buildMap(lat, lon);
 
     const usersData = await getUsersByLocation(city);
