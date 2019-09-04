@@ -33,7 +33,6 @@ function buildUserCard(user) {
             <p>${user.login}</p>
         </div>
     `;
-
 }
 
 function renderUsers() {
@@ -63,7 +62,6 @@ function buildMap(lat, lon) {
     }).addTo(appState.map);
 
     appState.map.zoomControl.setPosition('bottomright');
-
 }
 
 function addMarker(cityName, lat, lon, usersCount) {
@@ -99,44 +97,62 @@ function setMapView(lat, lon, zoom = 0) {
     appState.map.setView([lat, lon], zoom);
 }
 
-function cleanupUsers() {
-    appState.users = [];
+function cleanupUsersUI() {
     const aside = document.getElementById("aside-users");
     aside.innerHTML = "";
 }
 
-async function handleLocationForm(e) {
-    e.preventDefault();
-    //TODO: resetState
-    cleanupUsers();
+function resetState() {
     appState.page = 0;
-    
-    //TODO: resetState
+    appState.users = [];
     if (appState.location.marker) {
         appState.location.marker.remove();
     }
+}
 
-    const target = e.target;
-    const searchString = encodeURI(target[0].value);
-    let city = null;
-    
-    const usersData = await getUsersByLocation(searchString);
-    const usersCount = usersData.total_count;
+function isCountry(location) {
+    return location.components._type === "country";
+}
 
-    const locationData = await getCoordinates(searchString);
+function isCity(location) {
+    return location.components._type === "city";
+}
 
-    if (locationData.components._type === "country") {
-        city = locationData.components.country;
-    } else if (locationData.components._type === "city") {
-        city = locationData.components.city;
+function getLocationName(location) {
+    let locationName = "";
+
+    if (isCountry(location)) {
+        locationName = location.components.country;
+    } else if (isCity(location)) {
+        locationName = location.components.city;
+    } else {
+        locationName = "Unknown";
     }
 
-    const {lat, lng} = locationData.geometry;
+    return locationName;
+}
 
-    setMapView(lat, lng, 6)
-    appState.location.name = city;
-    appState.location.marker = addMarker(city, lat, lng, usersCount);
-    appState.users.push(usersData.items);
+async function handleLocationForm(e) {
+    e.preventDefault();
+    const target = e.target;
+    const searchString = encodeURI(target[0].value);
+
+    if (searchString === "") return
+    
+    resetState();
+    cleanupUsersUI();
+
+    const usersData = await getUsersByLocation(searchString);
+    saveUsersData(usersData);
+
+    const locationData = await getCoordinates(searchString);
+    const locationName = getLocationName(locationData);
+    appState.location.name = locationName;
+
+    const {lat, lng} = locationData.geometry;
+    setMapView(lat, lng, 6);
+
+    appState.location.marker = addMarker(locationName, lat, lng, appState.location.userCount);
     renderUsers();
 }
 
@@ -148,18 +164,26 @@ function addEvents() {
     aside.addEventListener("scroll", handleAsideScroll);
 }
 
-// function updateUsers
+function saveUsersData(usersData) {
+    const userCount = usersData.total_count;
+    const usersArray = usersData.items;
+
+    appState.users.push(usersArray);
+    appState.location.userCount = userCount;
+}
 
 async function init () {
     addEvents();
 
     const location = await getLocation();
     const {city, lat, lon} = location;
+
     appState.location.name = city;
     buildMap(lat, lon);
-    const userData = await getUsersByLocation(city);
-    appState.users.push(userData.items);
-    appState.location.userCount = userData.total_count;
+
+    const usersData = await getUsersByLocation(city);
+    saveUsersData(usersData);
+
     appState.location.marker = addMarker(city, lat, lon, appState.location.userCount);
     renderUsers();
 }
