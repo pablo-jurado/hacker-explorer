@@ -28,9 +28,9 @@ async function handleAsideScroll(e) {
 
 function buildUserCard(user) {
     return `
-        <div class="user-card">
+        <div class="box">
             <img class="user-img" src="${user.avatar_url}"/>
-            ${user.login}
+            <p>${user.login}</p>
         </div>
     `;
 
@@ -42,6 +42,7 @@ function renderUsers() {
     let arrUsers = usersPage.map(buildUserCard);
 
     var div = document.createElement("div");
+    div.classList.add("aside-page");
     div.innerHTML = arrUsers.join("");
 
     aside.appendChild(div); 

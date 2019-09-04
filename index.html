@@ -5,18 +5,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Hacker Explorer</title>
-    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.5/css/bulma.min.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css" integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ==" crossorigin=""/>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div id=app>
         <header>
-            <h3>Hacker Explorer</h3>
-            <form id="location-form">
-                <input type="text" placeholder="Enter city or country">
-                <input type="submit">
-            </form>
+
+            <div class="columns">
+                <div class="column"></div>
+                <div class="column is-half is-centered is-vcentered has-text-centered">
+                    <h3 class="subtitle">Hacker Explorer</h3>
+                    <form id="location-form">
+                        <div class="field has-addons">
+                            <input class="input input-txt is-rounded" type="text" placeholder="Enter city or country">
+                            <input class="button is-rounded" type="submit" value="Search">
+                        </div>
+                    </form>
+                </div>
+                <div class="column"></div>
+            </div>
         </header>
         <aside id="aside-users"></aside>
         <div id="mapid"></div>

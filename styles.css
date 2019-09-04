@@ -9,35 +9,52 @@ body {
 #app {
     position: relative;
     height: 100vh;
+    background-color: #fff;
 }
 
 header {
     padding: 1em;
-    height: 15vh;
-    background: rgb(235, 235, 235);
+    height: 20vh;
 }
+
+.input-txt {
+    margin-right: 10px;
+}
+
 #mapid {
     height: 85vh;
 }
 
 #aside-users {
     height: 100%;
-    width: 200px;
-    height: 85vh;
+    width: 25vw;
+    height: 80vh;
     position: absolute;
     z-index: 1000;
-    background: rgb(235, 235, 235);
+    background: #fff;
     overflow-y: auto;
+    padding: 5px 10px;
 }
 
-.user-card {
-    border: solid 1px grey;
-    margin:  5px;
-    padding: 5px;
+.aside-page {
+    margin-bottom: 25px;
+}
+
+.box {
+    display: flex;
+    align-items: center;
+    transition: all 0.2s ease-in-out;
+}
+
+.box:hover {
+    background-color: #EDF2F7;
+    transition: all 0.2s ease-in-out;
 }
 
 .user-img {
     height: 50px;
     width: 50px;
+    margin-right: 10px;
     border-radius: 50%;
+    box-shadow: 0 0 5px #CBD5E0;
 }
