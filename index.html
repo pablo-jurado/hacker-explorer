@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Hacker Explorer</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.2/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.5/css/bulma.min.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css" integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ==" crossorigin=""/>
     <link rel="stylesheet" href="styles.css">
@@ -24,7 +25,20 @@
                         </div>
                     </form>
                 </div>
-                <div class="column"></div>
+                <div class="column">
+                    <button class="button is-rounded is-small is-pulled-right is-dark">
+                        <span class="icon">
+                            <i class="fas fa-moon"></i>
+                        </span>
+                        <p>Dark mode</p>
+                    </button>
+                    <button class="button is-rounded is-small is-pulled-right">
+                        <span class="icon">
+                            <i class="fas fa-lightbulb"></i>
+                        </span>
+                        <p>Light mode</p>
+                    </button>
+                </div>
             </div>
         </header>
         <aside id="aside-users"></aside>
