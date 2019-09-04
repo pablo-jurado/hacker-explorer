@@ -162,16 +162,6 @@ async function handleLocationForm(e) {
     renderUsers();
 }
 
-// function disableBtn(btn) {
-//     btn.style.opacity = "0.2";
-//     btn.disabled = true;
-// }
-
-// function enableBtn(btn) {
-//     btn.style.opacity = "1";
-//     btn.disabled = false;
-// }
-
 function toggleUITheme() {
     const darkBtn = document.getElementById("dark-btn");
     const lightBtn = document.getElementById("light-btn");
@@ -250,3 +240,9 @@ async function init () {
 }
 
 init();
+
+export {
+    isCountry,
+    isCity,
+    getLocationName
+}
