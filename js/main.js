@@ -53,8 +53,6 @@ function renderUsers() {
 function buildMap(lat, lon) {
     appState.map = L.map('mapid');
 
-    var styles = ["mapbox.light", "mapbox.dark"]
-
     setMapView(lat, lon, 5);
 
     L.tileLayer(`https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=${process.env.MAPBOX_TOKEN}`, {
@@ -169,16 +167,14 @@ function toggleUITheme() {
     if (appState.theme === "light") {
         appState.theme = "dark";
         
-        app.classList.remove("light");
-        app.classList.add("dark");
+        app.classList.toggle("dark");
 
         darkBtn.style.display = "none";
         lightBtn.style.display = "inline-flex";
     } else {
         appState.theme = "light";
         
-        app.classList.remove("dark");
-        app.classList.add("light");     
+        app.classList.toggle("dark");
         
         lightBtn.style.display = "none";
         darkBtn.style.display = "inline-flex";
