@@ -1,5 +1,4 @@
 import L from "../leaflet/leaflet";
-import { MapBoxAccessToken, geoLocationKey } from "./config";
 
 let appState = {
     theme: "light",
@@ -58,11 +57,11 @@ function buildMap(lat, lon) {
 
     setMapView(lat, lon, 5);
 
-    L.tileLayer(`https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=${MapBoxAccessToken}`, {
+    L.tileLayer(`https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=${process.env.MAPBOX_TOKEN}`, {
         attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
         maxZoom: 18,
         id: `mapbox.${appState.theme}`,
-        accessToken: MapBoxAccessToken
+        accessToken: process.env.MAPBOX_TOKEN
     }).addTo(appState.map);
 
     appState.map.zoomControl.setPosition('bottomright');
@@ -85,7 +84,7 @@ async function getLocation() {
 }
 
 async function getCoordinates(place) {
-    let url = `https://api.opencagedata.com/geocode/v1/json?q=${place}&key=${geoLocationKey}`;
+    let url = `https://api.opencagedata.com/geocode/v1/json?q=${place}&key=${process.env.GEO_LOCATION_KEY}`;
     const data = await myFetch(url);
     return data.results[0];
 }
