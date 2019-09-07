@@ -31,11 +31,16 @@ async function handleAsideScroll(e) {
 
 function buildUserCard(user) {
     return `
-        <div class="box">
-            <img class="user-img" src="${user.avatar_url}"/>
-            <p>${user.login}</p>
+        <div class="box user-btn" onclick="handleUserClick('${user.url}')">
+            <img class="user-img user-btn" src="${user.avatar_url}"/>
+            <p class="user-btn">${user.login}</p>
         </div>
     `;
+}
+
+async function handleUserClick(url) {
+    const response = await myFetch(url);
+    openModal(response);
 }
 
 function renderUsers() {
@@ -200,11 +205,53 @@ function saveUsersData(usersData) {
     appState.location.userCount = userCount;
 }
 
+function closeModal() {
+    const wrapper = document.getElementById("modal-wrapper");
+    wrapper.innerHTML = "";
+}
+
+function openModal(user) {
+    console.log(user);
+    const wrapper = document.getElementById("modal-wrapper");
+
+    const modal = `
+    <div class="modal is-active">
+        <div class="modal-background"></div>
+        <div class="modal-content">
+            <div class="box">
+                <article class="media">
+                    <div class="media-left">
+                    <figure class="image is-64x64">
+                        <img class="" src="${user.avatar_url}" />
+                    </figure>
+                    </div>
+                    <div class="media-content">
+                    <div class="content">
+                        <p>
+                        <strong>${user.name}</strong> <small>${user.login}</small>
+                        <br>
+                        ${user.bio || "Bio not available"}
+                        </p>
+                    </div>
+
+                    </div>
+                </article>
+            </div>
+        </div>
+        <button onClick="closeModal()" class="modal-close is-large" aria-label="close"></button>
+    </div>`;
+
+    wrapper.innerHTML = modal;
+}
+
 function addEvents() {
     const form = document.getElementById("location-form");
     const aside = document.getElementById("aside-users");
     const darkBtn = document.getElementById("dark-btn");
     const lightBtn = document.getElementById("light-btn");
+
+    window.handleUserClick = handleUserClick;
+    window.closeModal = closeModal;
 
     form.addEventListener("submit", handleLocationForm);
     aside.addEventListener("scroll", handleAsideScroll);
