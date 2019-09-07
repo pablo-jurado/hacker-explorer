@@ -1,4 +1,6 @@
-import L from "../leaflet/leaflet";
+import { renderUsers, renderModal } from "./render";
+import { buildMap, setMapView, addMarker } from "./map";
+import { getLocationName } from "./utils";
 
 let appState = {
     theme: "light",
@@ -13,6 +15,8 @@ let appState = {
     page: 0,
     map: null,
 }
+
+window.appState = appState;
 
 async function myFetch(url) {
     const response = await fetch(url);
@@ -29,55 +33,9 @@ async function handleAsideScroll(e) {
     }
 }
 
-function buildUserCard(user) {
-    return `
-        <div class="box user-btn" onclick="handleUserClick('${user.url}')">
-            <img class="user-img user-btn" src="${user.avatar_url}"/>
-            <p class="user-btn">${user.login}</p>
-        </div>
-    `;
-}
-
 async function handleUserClick(url) {
     const response = await myFetch(url);
-    openModal(response);
-}
-
-function renderUsers() {
-    let aside = document.getElementById("aside-users");
-    let usersPage = appState.users[appState.page-1];
-    let arrUsers = usersPage.map(buildUserCard);
-
-    var div = document.createElement("div");
-    div.classList.add("aside-page");
-    div.innerHTML = arrUsers.join("");
-
-    aside.appendChild(div); 
-}
-
-function buildMap(lat, lon) {
-    appState.map = L.map('mapid');
-
-    setMapView(lat, lon, 5);
-
-    L.tileLayer(`https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=${process.env.MAPBOX_TOKEN}`, {
-        attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-        maxZoom: 18,
-        id: `mapbox.${appState.theme}`,
-        accessToken: process.env.MAPBOX_TOKEN
-    }).addTo(appState.map);
-
-    appState.map.zoomControl.setPosition('bottomright');
-}
-
-function addMarker(cityName, lat, lon, usersCount) {
-    var marker = L.marker([lat, lon]).addTo(appState.map);
-    marker.bindPopup(`
-        <strong>${cityName}</strong>
-        <br>
-        <p>Has ${usersCount} hackers</p>`
-    ).openPopup();
-    return marker;
+    renderModal(response);
 }
 
 async function getLocation() {
@@ -99,10 +57,6 @@ async function getUsersByLocation(city) {
     return users;
 }
 
-function setMapView(lat, lon, zoom = 0) {
-    appState.map.setView([lat, lon], zoom);
-}
-
 function cleanupUsersUI() {
     const aside = document.getElementById("aside-users");
     aside.innerHTML = "";
@@ -114,27 +68,6 @@ function resetState() {
     if (appState.location.marker) {
         appState.location.marker.remove();
     }
-}
-
-function isCountry(location) {
-    return location.components._type === "country";
-}
-
-function isCity(location) {
-    return location.components._type === "city";
-}
-
-function getLocationName(location) {
-    let locationName = "";
-
-    if (isCountry(location)) {
-        locationName = location.components.country;
-    } else if (isCity(location)) {
-        locationName = location.components.city;
-    } else {
-        locationName = "Unknown";
-    }
-    return locationName;
 }
 
 async function handleLocationForm(e) {
@@ -210,40 +143,6 @@ function closeModal() {
     wrapper.innerHTML = "";
 }
 
-function openModal(user) {
-    console.log(user);
-    const wrapper = document.getElementById("modal-wrapper");
-
-    const modal = `
-    <div class="modal is-active">
-        <div class="modal-background"></div>
-        <div class="modal-content">
-            <div class="box">
-                <article class="media">
-                    <div class="media-left">
-                    <figure class="image is-64x64">
-                        <img class="" src="${user.avatar_url}" />
-                    </figure>
-                    </div>
-                    <div class="media-content">
-                    <div class="content">
-                        <p>
-                        <strong>${user.name}</strong> <small>${user.login}</small>
-                        <br>
-                        ${user.bio || "Bio not available"}
-                        </p>
-                    </div>
-
-                    </div>
-                </article>
-            </div>
-        </div>
-        <button onClick="closeModal()" class="modal-close is-large" aria-label="close"></button>
-    </div>`;
-
-    wrapper.innerHTML = modal;
-}
-
 function addEvents() {
     const form = document.getElementById("location-form");
     const aside = document.getElementById("aside-users");
@@ -282,9 +181,3 @@ async function init () {
 }
 
 init();
-
-export {
-    isCountry,
-    isCity,
-    getLocationName
-}

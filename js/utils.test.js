@@ -1,6 +1,6 @@
-var main = require('./main');
+var utils = require('./utils');
 
-describe('main.js', function() {
+describe('utils.js', function() {
 
   describe('isCountry', function() {
     it('should return true when the type is country', function() {
@@ -9,7 +9,7 @@ describe('main.js', function() {
           _type: "country"
         }
       };
-      expect(main.isCountry(obj)).toEqual(true);
+      expect(utils.isCountry(obj)).toEqual(true);
     });
 
     it('should return false when the type is not a country', function() {
@@ -18,7 +18,7 @@ describe('main.js', function() {
           _type: "city"
         }
       };
-      expect(main.isCountry(obj)).toEqual(false);
+      expect(utils.isCountry(obj)).toEqual(false);
     });
   });
 
@@ -29,7 +29,7 @@ describe('main.js', function() {
           _type: "city"
         }
       };
-      expect(main.isCity(obj)).toEqual(true);
+      expect(utils.isCity(obj)).toEqual(true);
     });
 
     it('should return false when the type is not a city', function() {
@@ -38,7 +38,7 @@ describe('main.js', function() {
           _type: "country"
         }
       };
-      expect(main.isCity(obj)).toEqual(false);
+      expect(utils.isCity(obj)).toEqual(false);
     });
   });
 
@@ -51,7 +51,7 @@ describe('main.js', function() {
           city: "Houston"
         }
       };
-      expect(main.getLocationName(obj)).toEqual("Houston");
+      expect(utils.getLocationName(obj)).toEqual("Houston");
     });
 
     it('should return the proper country name', function() {
@@ -62,7 +62,7 @@ describe('main.js', function() {
           city: null
         }
       };
-      expect(main.getLocationName(obj)).toEqual("Canada");
+      expect(utils.getLocationName(obj)).toEqual("Canada");
     });
 
     it('should return unknown when the location is not available', function() {
@@ -73,7 +73,7 @@ describe('main.js', function() {
           city: null
         }
       };
-      expect(main.getLocationName(obj)).toEqual("Unknown");
+      expect(utils.getLocationName(obj)).toEqual("Unknown");
     });
 
   });
