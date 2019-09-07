@@ -11,7 +11,11 @@ Tech utilized:
 * [Travis](travis) for continuous integration.
 
 
-![](header.png)
+## Light Theme
+![](ScreenShot1.png)
+
+## Dark Theme
+![](ScreenShot2.png)
 
 ## Installation
 
@@ -23,7 +27,8 @@ npm install
 
 ## Development setup
 
-Describe how to install all development dependencies and how to run an automated test-suite of some kind. Potentially do this for multiple platforms.
+Run this command to start the development server.
+The Parcel server will be running at http://localhost:1234
 
 ```sh
 npm dev
@@ -31,21 +36,12 @@ npm dev
 
 ## Runnning test
 
-Describe how to install all development dependencies and how to run an automated test-suite of some kind. Potentially do this for multiple platforms.
+Run this command to start the Jest test.
+Any file named <file-name>.test.js will be automatically picked up and added to the test suite.
 
 ```sh
 npm test
 ```
-
-
-
-## Meta
-
-Your Name – [@YourTwitter](https://twitter.com/dbader_org) – YourEmail@example.com
-
-Distributed under the XYZ license. See ``LICENSE`` for more information.
-
-[https://github.com/yourname/github-link](https://github.com/dbader/)
 
 ## Contributing
 
@@ -62,28 +58,3 @@ Distributed under the XYZ license. See ``LICENSE`` for more information.
 [jest]: https://jestjs.io
 [bulma]: https://bulma.io/
 
-
-
-
-
-## Table of contents
-
-Use for instance <https://github.com/ekalinin/github-markdown-toc>:
-
-> * [Title / Repository Name](#title--repository-name)
->   * [About / Synopsis](#about--synopsis)
->   * [Table of contents](#table-of-contents)
->   * [Installation](#installation)
->   * [Usage](#usage)
->     * [Screenshots](#screenshots)
->     * [Features](#features)
->   * [Code](#code)
->     * [Content](#content)
->     * [Requirements](#requirements)
->     * [Limitations](#limitations)
->     * [Build](#build)
->     * [Deploy (how to install build product)](#deploy-how-to-install-build-product)
->   * [Resources (Documentation and other links)](#resources-documentation-and-other-links)
->   * [Contributing / Reporting issues](#contributing--reporting-issues)
->   * [License](#license)
->   * [About Nuxeo](#about-nuxeo)
